@@ -1,166 +1,233 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Home</title>
 
-        <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
-        <style>
-            * {
-                box-sizing: border-box;
-                font-family: 'Roboto', sans-serif;
-                padding: 0;
-                margin: 0;
+<head>
+    <title>Home</title>
+
+    <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+            padding: 0;
+            margin: 0;
+        }
+
+        @keyframes gradient {
+            0% {
+                background-position: 0 50%
             }
 
-            html, body, main {
-                height: 100%;
+            50% {
+                background-position: 100% 50%
             }
 
-            main {
-                display: flex;
-                position: relative;
-                margin: 0 auto;
-                width: 100%;
-                max-width: 800px;
-                flex-direction: column;
-                align-items: center;
+            to {
+                background-position: 0 50%
             }
+        }
 
-            h1 {
-                margin-top: 40px;
-            }
+        html,
+        body,
+        main {
+            height: 100%;
+        }
 
-            input[type="text"] {
-                height: 45px;
-                border: 1px solid #b2bec3;
-                border-radius: 5px;
-                padding: 0 10px;
-                outline: none;
-            }
+        body {
+            background: linear-gradient(-45deg, #0984e3, #23a6d5, #4eaead);
+            background-size: 400% 400%;
+            -webkit-animation: gradient 10s ease infinite;
+            animation: gradient 10s ease infinite;
+        }
 
-            button {
-                height: 45px;
-                border: 1px solid #0984e3;
-                background-color: #0984e3;
-                color: #fff;
-                border-radius: 5px;
-                padding: 0 10px;
-                outline: none;
-                cursor: pointer;
-            }
+        main {
+            display: flex;
+            position: relative;
+            margin: 0 auto;
+            width: 100%;
+            max-width: 800px;
+            flex-direction: column;
+            align-items: center;
+            background-color: #fff;
+            padding: 20px;
+        }
 
-            #message-container {
-                width: 100%;
-                padding: 20px;
-            }
+        h1 {
+            margin-top: 40px;
+        }
 
-            .message {
-                padding: 10px;
-                overflow: hidden;
-            }
+        input[type="text"] {
+            height: 45px;
+            background-color: #d4d7d8;
+            border: none;
+            border-radius: 5px;
+            padding: 0 10px;
+            outline: none;
+        }
 
-            .message span {
-                display: inline-block;
-                background-color: #b2bec3;
-                border-radius: 3px;
-                padding: 10px;
-                float: right;
-            }
+        input[type="text"]:focus {
+            background-color: #bfc7ca;
+        }
 
-            .message.mine span {
-                background-color: #0984e3;
-                color: #fff;
-                float: left;
-            }
-            
-            #user-input-container {
-                display: flex;
-                padding: 40px;
-                border-bottom: 1px solid #b2bec3;
-                width: 100%;
-                justify-content: center;
-            }
+        button {
+            height: 46px;
+            min-width: 46px;
+            border: 1px solid #0984e3;
+            background-color: #0984e3;
+            color: #fff;
+            border-radius: 28px;
+            padding: 0 10px;
+            outline: none;
+            cursor: pointer;
+            margin-left: 10px;
+        }
 
-            #user-input-container input {
-                width: 50%;
-                margin-right: 10px;
-            }
+        button.green {
+            background-color: #4eaead;
+            border-color: #4eaead;
+        }
 
-            #message-input-container {
-                position: absolute;
-                display: flex;
-                bottom: 0;
-                padding: 40px;
-                border-top: 1px solid #b2bec3;
-                width: 100%;
-                justify-content: center;
-            }
+        #message-container {
+            width: 100%;
+            height: calc(100% - 340px);
+            background-color: #f4f4f4;
+            border-radius: 10px;
+            padding: 20px;
+        }
 
-            #message-input-container input {
-                width: 50%;
-                margin-right: 10px;
-            }
-        </style>
-    </head>
-    <body>
-        <main>
-            <h1></h1>
+        .message {
+            padding: 10px;
+            overflow: hidden;
+        }
 
-            <div id="user-input-container">
-                <input id="user-id" type="text" placeholder="Paste user id here" />
-                <button id="submit-user-id" >Connect</button>
-            </div>
+        .message span {
+            display: inline-block;
+            background-color: #b2bec3;
+            border-radius: 3px;
+            padding: 10px;
+            float: right;
+            font-size: 14px;
+        }
 
-            <div id="message-container"></div>
+        .message.mine span {
+            background-color: #0984e3;
+            color: #fff;
+            float: left;
+        }
 
-            <div id="message-input-container">
-                <input id="message" type="text" placeholder="Type message here" />
-                <button id="submit" >Send</button>
-            </div>
-        </main>
+        #user-input-container {
+            display: flex;
+            padding: 40px;
+            width: 100%;
+            justify-content: center;
+        }
 
-        <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
-        <script>
-            $(document).ready(function () {
-                const socket = new WebSocket("ws://localhost:3000/ws");
-                let id;
+        #user-input-container input {
+            width: 50%;
+            margin-right: 10px;
+        }
 
-                socket.onmessage = (message) => {
-                    message = JSON.parse(message.data);
+        #message-input-container {
+            position: absolute;
+            display: flex;
+            bottom: 0;
+            left: 20px;
+            right: 20px;
+            padding: 40px;
+            width: calc(100% - 40px);
+            justify-content: center;
+            height: 130px;
+        }
 
-                    if (message.type == 'ID') {
-                        id = message.payload;
+        #message-input-container input {
+            width: 50%;
+            margin-right: 10px;
+        }
 
-                        $('h1').text(`Your id: ${id}`);
-                    } else if (message.type == 'MESSAGE') {
+        #id-container {
+            position: absolute;
+            bottom: 15px;
+            width: calc(100% - 40px);
+            text-align: center;
+            font-size: 12px;
+            color: #b2bec3;
+        }
 
-                        if(message.senderId == id)
-                            $('#message-container').append(`<div class="message mine"><span>${message.payload}</span></div>`);
-                        else
-                            $('#message-container').append(`<div class="message"><span>${message.payload}</span></div>`);
-                    }
-                };
+        .logo {
+            width: 160px;
+        }
+    </style>
+    <style>
 
-                $(this).on('click', '#submit', function () {
-                    $(this).val('');
+    </style>
+</head>
 
-                    socket.send(JSON.stringify({
-                        type: 'MESSAGE',
-                        userId: id,
-                        payload: $('#message').val()
-                    }));
-                });
+<body>
+    <main>
+        <img class="logo" src="./assets/logo.png" />
 
-                $(this).on('click', '#submit-user-id', function () {
-                    $(this).val('');
+        <div id="user-input-container">
+            <input id="user-id" type="text" placeholder="Paste user id here" />
+            <button id="submit-user-id">Connect</button>
+            <!-- <button class="green">Copy invite</button> -->
+        </div>
 
-                    socket.send(JSON.stringify({
-                        type: 'CONNECT',
-                        userId: id,
-                        payload: $('#user-id').val()
-                    }));
-                });
+        <div id="message-container"></div>
+
+        <div id="message-input-container">
+            <input id="message" type="text" placeholder="Type message here" />
+            <button id="submit"><i class="fas fa-paper-plane"></i></button>
+        </div>
+
+        <span id="id-container">Your id: <b></b></span>
+    </main>
+
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            const socket = new WebSocket("ws://localhost:3000/ws");
+            let id;
+
+            socket.onmessage = (message) => {
+                message = JSON.parse(message.data);
+
+                if (message.type == 'ID') {
+                    id = message.payload;
+
+                    $('#id-container b').text(id);
+                } else if (message.type == 'MESSAGE') {
+
+                    if (message.senderId == id)
+                        $('#message-container').append(`<div class="message mine"><span>${message.payload}</span></div>`);
+                    else
+                        $('#message-container').append(`<div class="message"><span>${message.payload}</span></div>`);
+                }
+            };
+
+            $(this).on('click', '#submit', function () {
+                $(this).val('');
+
+                socket.send(JSON.stringify({
+                    type: 'MESSAGE',
+                    userId: id,
+                    payload: $('#message').val()
+                }));
             });
-        </script>
-    </body>
+
+            $(this).on('click', '#submit-user-id', function () {
+                $(this).val('');
+
+                socket.send(JSON.stringify({
+                    type: 'CONNECT',
+                    userId: id,
+                    payload: $('#user-id').val()
+                }));
+            });
+        });
+    </script>
+</body>
+
 </html>
