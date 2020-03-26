@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Home</title>
+
+    <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" rel="stylesheet">
+
+    <link href="./assets/css/style.css" rel="stylesheet">
+</head>
+
+<body>
+    <main>
+        <img class="logo" src="./assets/images/logo.png" />
+
+        <div id="conversation-input-container">
+            <input id="conversation-id" type="text" placeholder="Paste user id here" />
+            <button id="submit-conversation-id">Connect</button>
+            <button class="green">Copy invite</button>
+        </div>
+
+        <div id="message-container"></div>
+
+        <div id="message-input-container">
+            <input id="message" type="text" placeholder="Type message here" />
+            <button id="submit"><i class="fas fa-paper-plane"></i></button>
+        </div>
+
+        <span id="id-container">Conversation id: <b></b></span>
+    </main>
+
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js"></script>
+    <script src="./assets/scripts/main.js"></script>
+</body>
+
+</html>
