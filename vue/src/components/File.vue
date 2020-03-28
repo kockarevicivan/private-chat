@@ -1,8 +1,7 @@
 <template>
   <div :class="computedClass">
     <div>
-      <a v-if="isFile" :href="content" :download="name">{{name}}</a>
-      <span v-else v-html="replaceUrls(text)"></span>
+      <a :href="content" download>{{name}}</a>
       <span class="time-created">{{formatDate(timestamp)}}</span>
     </div>
   </div>
@@ -10,11 +9,9 @@
 
 <script>
 export default {
-  name: "Message",
+  name: "File",
   props: {
-    isFile: Boolean,
     isMine: Boolean,
-    text: String,
     name: String,
     content: String,
     timestamp: Number,
@@ -38,17 +35,6 @@ export default {
       let strTime = hours + ':' + minutes + ' ' + ampm;
 
       return (date.getMonth()+1) + "/" + date.getDate() + "/" + date.getFullYear() + "  " + strTime;
-    },
-    replaceUrls(content) {
-      let exp_match = /(\b(https?|):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi;
-      let element_content = content.replace(exp_match, '<a target="_blank" href="$1">$1</a>');
-      let new_exp_match = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
-      let new_content = element_content.replace(
-        new_exp_match,
-        '$1<a target="_blank" href="http://$2">$2</a>'
-      );
-
-      return new_content;
     }
   }
 };

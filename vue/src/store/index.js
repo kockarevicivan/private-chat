@@ -3,8 +3,10 @@ import Vuex from "vuex";
 
 Vue.use(Vuex);
 
-const protocol = window.location.protocol == 'https:' ? 'wss://' : 'ws://';
-const host = window.location.host.startsWith('localhost') ? 'localhost:3000' : window.location.host;
+const protocol = window.location.protocol == "https:" ? "wss://" : "ws://";
+const host = window.location.host.startsWith("localhost")
+  ? "localhost:3000"
+  : window.location.host;
 
 const socket = new WebSocket(protocol + host);
 
@@ -32,21 +34,33 @@ const store = new Vuex.Store({
       context.commit("addMessage", payload);
 
       setTimeout(() => {
-        const messageContainer = document.querySelector('.message-container');
+        const messageContainer = document.querySelector(".message-container");
         messageContainer.scrollTop = messageContainer.scrollHeight + 140;
       }, 200);
     },
     connectToConversation(context, payload) {
-      socket.send(JSON.stringify({
-        type: "CONNECT",
-        payload
-      }));
+      socket.send(
+        JSON.stringify({
+          type: "CONNECT",
+          payload
+        })
+      );
     },
     sendMessage(context, payload) {
-      socket.send(JSON.stringify({
-        type: "MESSAGE",
-        payload
-      }));
+      socket.send(
+        JSON.stringify({
+          type: "MESSAGE",
+          payload
+        })
+      );
+    },
+    sendFile(context, payload) {
+      socket.send(
+        JSON.stringify({
+          type: "FILE",
+          payload
+        })
+      );
     }
   },
   getters: {
@@ -57,31 +71,37 @@ const store = new Vuex.Store({
 
 const getParameterByName = (name, url) => {
   if (!url) url = window.location.href;
-  
-  name = name.replace(/[\[\]]/g, '\\$&');
-  let regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
-      results = regex.exec(url);
+
+  name = name.replace(/[\[\]]/g, "\\$&");
+  let regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+    results = regex.exec(url);
 
   if (!results) return null;
-  if (!results[2]) return '';
+  if (!results[2]) return "";
 
-  return decodeURIComponent(results[2].replace(/\+/g, ' '));
-}
+  return decodeURIComponent(results[2].replace(/\+/g, " "));
+};
 
 socket.onopen = () => {
-  const initialConversationId = getParameterByName('room');
+  const initialConversationId = getParameterByName("room");
 
   if (initialConversationId)
-    store.dispatch('connectToConversation', { conversationId: initialConversationId });
+    store.dispatch("connectToConversation", {
+      conversationId: initialConversationId
+    });
 };
 
 socket.onmessage = message => {
   message = JSON.parse(message.data);
 
-  if (message.type == 'SESSION_DATA')
-    store.dispatch('setSessionData', message.payload);
-  else if (message.type == 'MESSAGE')
-    store.dispatch('addMessage', message.payload);
+  if (message.type == "SESSION_DATA") {
+    store.dispatch("setSessionData", message.payload);
+  } else if (message.type == "MESSAGE") {
+    store.dispatch("addMessage", message.payload);
+  } else if (message.type == "FILE") {
+    message.payload.isFile = true;
+    store.dispatch("addMessage", message.payload);
+  }
 };
 
 export default store;

@@ -4,6 +4,7 @@ const userRegistry = require('../models/registries/UserRegistry');
 const Conversation = require('../models/Conversation');
 const User = require('../models/User');
 const Message = require('../models/Message');
+const File = require('../models/File');
 
 class SocketController {
     onConnection (socket) {
@@ -29,6 +30,16 @@ class SocketController {
                     type: 'MESSAGE',
                     payload: new Message(
                         data.payload.text,
+                        data.payload.timestamp,
+                        user.id
+                    )
+                }));
+            } else if (data.type == 'FILE') {
+                conversation.sendMessage(JSON.stringify({
+                    type: 'FILE',
+                    payload: new File(
+                        data.payload.name,
+                        data.payload.content,
                         data.payload.timestamp,
                         user.id
                     )

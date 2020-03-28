@@ -1,12 +1,15 @@
 <template>
   <main>
-    <img class="logo" src="images/logo.png" />
-
     <div class="message-container">
+      <img class="logo" src="images/logo.png" />
+
       <Message
         v-for="message in computedMessages"
         :key="message.id"
+        :isFile="message.isFile"
         :text="message.text"
+        :name="message.name"
+        :content="message.content"
         :timestamp="message.timestamp"
         :isMine="message.senderId == computedSessionData.userId"
       />
@@ -34,7 +37,7 @@
     </div>
 
     <span class="session-data-container">
-      Conversation id:
+      Room id:
       <b>{{ computedSessionData.conversationId }}</b>
     </span>
   </main>
@@ -65,16 +68,18 @@ export default {
   methods: {
     readFile(event) {
       let file = event.srcElement.files[0];
-      
+
       var reader = new FileReader();
       reader.readAsDataURL(file);
       reader.onload = () => {
-        this.$store.dispatch("sendMessage", {
-          text: reader.result,
+        this.$store.dispatch("sendFile", {
+          isFile: true,
+          name: file.name,
+          content: reader.result,
           timestamp: new Date().getTime()
         });
       };
-      reader.onerror = (error) => {
+      reader.onerror = error => {
         console.log("Error: ", error);
       };
     },
@@ -88,7 +93,9 @@ export default {
     },
     copyInviteLinkToClipboard() {
       let text =
-        window.location.origin + "?room=" + this.computedSessionData.conversationId;
+        window.location.origin +
+        "?room=" +
+        this.computedSessionData.conversationId;
 
       if (!navigator.clipboard) {
         this.fallbackCopyTextToClipboard(text);
@@ -215,8 +222,9 @@ input[type="text"]:focus {
 }
 
 .message-container {
+  position: relative;
   width: 100%;
-  height: calc(100% - 235px);
+  height: calc(100% - 110px);
   background-color: #f4f4f4;
   border-radius: 10px;
   padding: 20px;
@@ -239,9 +247,13 @@ input[type="text"]:focus {
   max-width: 70%;
   line-height: 19px;
   overflow-wrap: break-word;
+
+  a {
+    color: inherit;
+  }
 }
 
-.message.mine div {
+.message.mine > div {
   background-color: #0984e3;
   color: #fff;
   float: left;
@@ -273,7 +285,11 @@ input[type="text"]:focus {
 }
 
 .logo {
-  width: 160px;
-  margin-bottom: 20px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 120px;
+  opacity: 0.2;
 }
 </style>
