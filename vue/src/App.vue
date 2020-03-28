@@ -2,25 +2,34 @@
   <main>
     <img class="logo" src="images/logo.png" />
 
-    <div class="conversation-input-container">
-      <input v-model="conversationIdInput" type="text" placeholder="Paste user id here" @keydown.enter="connectToConversation" />
-      <button @click="connectToConversation">Connect</button>
-      <button class="green" @click="copyInviteLinkToClipboard">Copy invite</button>
-    </div>
-
     <div class="message-container">
       <Message
         v-for="message in computedMessages"
         :key="message.id"
         :text="message.text"
+        :timestamp="message.timestamp"
         :isMine="message.senderId == computedSessionData.userId"
       />
     </div>
 
     <div class="message-input-container">
-      <input v-model="messageInput" type="text" placeholder="Type message here" @keydown.enter="sendMessage" />
-      <button @click="sendMessage">
+      <label class="btn file-input" title="Send file">
+        <i class="fas fa-plus"></i>
+        <input type="file" @change="readFile" />
+      </label>
+
+      <input
+        v-model="messageInput"
+        type="text"
+        placeholder="Type message here"
+        @keydown.enter="sendMessage"
+      />
+
+      <button class="btn" @click="sendMessage" title="Send message">
         <i class="fas fa-paper-plane"></i>
+      </button>
+      <button class="btn grey" @click="copyInviteLinkToClipboard" title="Copy invite link">
+        <i class="fas fa-copy"></i>
       </button>
     </div>
 
@@ -54,12 +63,20 @@ export default {
     }
   },
   methods: {
-    connectToConversation() {
-      this.$store.dispatch("connectToConversation", {
-        conversationId: this.conversationIdInput
-      });
-
-      this.conversationIdInput = '';
+    readFile(event) {
+      let file = event.srcElement.files[0];
+      
+      var reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        this.$store.dispatch("sendMessage", {
+          text: reader.result,
+          timestamp: new Date().getTime()
+        });
+      };
+      reader.onerror = (error) => {
+        console.log("Error: ", error);
+      };
     },
     sendMessage() {
       this.$store.dispatch("sendMessage", {
@@ -67,13 +84,14 @@ export default {
         timestamp: new Date().getTime()
       });
 
-      this.messageInput = '';
+      this.messageInput = "";
     },
     copyInviteLinkToClipboard() {
-      let text = this.computedSessionData.conversationId;
+      let text =
+        window.location.origin + "/" + this.computedSessionData.conversationId;
 
       if (!navigator.clipboard) {
-        fallbackCopyTextToClipboard(text);
+        this.fallbackCopyTextToClipboard(text);
         return;
       }
 
@@ -160,7 +178,7 @@ input[type="text"] {
   background-color: #d4d7d8;
   border: none;
   border-radius: 5px;
-  padding: 0 10px;
+  padding: 0 15px;
   outline: none;
 }
 
@@ -168,8 +186,10 @@ input[type="text"]:focus {
   background-color: #bfc7ca;
 }
 
-button {
+.btn {
   height: 46px;
+  line-height: 46px;
+  text-align: center;
   min-width: 46px;
   border: 1px solid #0984e3;
   background-color: #0984e3;
@@ -178,20 +198,29 @@ button {
   padding: 0 10px;
   outline: none;
   cursor: pointer;
-  margin-left: 10px;
 }
 
-button.green {
-  background-color: #4eaead;
-  border-color: #4eaead;
+.btn:active {
+  opacity: 0.4;
+}
+
+.btn.grey {
+  background-color: #d4d7d8;
+  color: #999;
+  border-color: #d4d7d8;
+}
+
+.file-input input {
+  display: none;
 }
 
 .message-container {
   width: 100%;
-  height: calc(100% - 340px);
+  height: calc(100% - 235px);
   background-color: #f4f4f4;
   border-radius: 10px;
   padding: 20px;
+  overflow: auto;
 }
 
 .message {
@@ -199,47 +228,38 @@ button.green {
   overflow: hidden;
 }
 
-.message span {
+.message > div {
+  position: relative;
   display: inline-block;
   background-color: #b2bec3;
   border-radius: 3px;
-  padding: 10px;
+  padding: 6px 10px;
   float: right;
-  font-size: 14px;
+  font-size: 13px;
+  max-width: 70%;
+  line-height: 19px;
+  overflow-wrap: break-word;
 }
 
-.message.mine span {
+.message.mine div {
   background-color: #0984e3;
   color: #fff;
   float: left;
 }
 
-.conversation-input-container {
-  display: flex;
-  padding: 40px;
-  width: 100%;
-  justify-content: center;
-}
-
-.conversation-input-container input {
-  width: 50%;
-  margin-right: 10px;
-}
-
 .message-input-container {
   position: absolute;
   display: flex;
+  justify-content: space-between;
   bottom: 0;
   left: 20px;
   right: 20px;
   padding: 40px;
   width: calc(100% - 40px);
-  justify-content: center;
   height: 130px;
 
   input {
-    width: 50%;
-    margin-right: 10px;
+    width: calc(100% - 170px);
   }
 }
 
@@ -254,5 +274,6 @@ button.green {
 
 .logo {
   width: 160px;
+  margin-bottom: 20px;
 }
 </style>

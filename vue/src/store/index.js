@@ -3,7 +3,13 @@ import Vuex from "vuex";
 
 Vue.use(Vuex);
 
-const socket = new WebSocket("ws://localhost:3000");
+const protocol = window.location.protocol == 'https:' ? 'wss://' : 'ws://';
+const host = window.location.host.startsWith('localhost') ? 'localhost:3000' : window.location.host;
+
+console.log(protocol + host);
+
+const socket = new WebSocket(protocol + host);
+
 const store = new Vuex.Store({
   state: {
     sessionData: {
@@ -26,6 +32,11 @@ const store = new Vuex.Store({
     },
     addMessage(context, payload) {
       context.commit("addMessage", payload);
+
+      setTimeout(() => {
+        const messageContainer = document.querySelector('.message-container');
+        messageContainer.scrollTop = messageContainer.scrollHeight + 140;
+      }, 200);
     },
     connectToConversation(context, payload) {
       socket.send(JSON.stringify({
@@ -45,6 +56,13 @@ const store = new Vuex.Store({
     messages: state => () => state.messages
   }
 });
+
+socket.onopen = () => {
+  const initialConversationId = window.location.pathname.substring(1);
+
+  if (initialConversationId)
+    store.dispatch('connectToConversation', { conversationId: initialConversationId });
+};
 
 socket.onmessage = message => {
   message = JSON.parse(message.data);
