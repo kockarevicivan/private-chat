@@ -88,7 +88,7 @@ export default {
     },
     copyInviteLinkToClipboard() {
       let text =
-        window.location.origin + "/" + this.computedSessionData.conversationId;
+        window.location.origin + "?room=" + this.computedSessionData.conversationId;
 
       if (!navigator.clipboard) {
         this.fallbackCopyTextToClipboard(text);

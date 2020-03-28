@@ -14,7 +14,7 @@ export default {
   props: {
     isMine: Boolean,
     text: String,
-    timestamp: String,
+    timestamp: Number,
   },
   computed: {
     isFile () {

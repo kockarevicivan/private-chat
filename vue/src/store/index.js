@@ -6,8 +6,6 @@ Vue.use(Vuex);
 const protocol = window.location.protocol == 'https:' ? 'wss://' : 'ws://';
 const host = window.location.host.startsWith('localhost') ? 'localhost:3000' : window.location.host;
 
-console.log(protocol + host);
-
 const socket = new WebSocket(protocol + host);
 
 const store = new Vuex.Store({
@@ -57,8 +55,21 @@ const store = new Vuex.Store({
   }
 });
 
+const getParameterByName = (name, url) => {
+  if (!url) url = window.location.href;
+  
+  name = name.replace(/[\[\]]/g, '\\$&');
+  let regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+      results = regex.exec(url);
+
+  if (!results) return null;
+  if (!results[2]) return '';
+
+  return decodeURIComponent(results[2].replace(/\+/g, ' '));
+}
+
 socket.onopen = () => {
-  const initialConversationId = window.location.pathname.substring(1);
+  const initialConversationId = getParameterByName('room');
 
   if (initialConversationId)
     store.dispatch('connectToConversation', { conversationId: initialConversationId });
