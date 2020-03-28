@@ -16,7 +16,8 @@ const store = new Vuex.Store({
       userId: null,
       conversationId: null
     },
-    messages: []
+    messages: [],
+    aliasRegistry: {}
   },
   mutations: {
     setSessionData(state, payload) {
@@ -24,6 +25,9 @@ const store = new Vuex.Store({
     },
     addMessage(state, payload) {
       state.messages.push(payload);
+    },
+    setAlias(state, payload) {
+      state.aliasRegistry[payload.key] = payload.value;
     }
   },
   actions: {
@@ -61,11 +65,15 @@ const store = new Vuex.Store({
           payload
         })
       );
-    }
+    },
+    setAlias (context, payload) {
+      context.commit('setAlias', payload);
+    } 
   },
   getters: {
     sessionData: state => () => state.sessionData,
-    messages: state => () => state.messages
+    messages: state => () => state.messages,
+    alias: state => (key) => state.aliasRegistry[key]
   }
 });
 

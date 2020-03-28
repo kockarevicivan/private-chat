@@ -1,8 +1,15 @@
 <template>
   <div :class="computedClass">
     <div>
+      <input @change="editAlias" class="sender" :value="computedAlias" />
+
+      <img v-if="isImage" :src="content" />
+      <audio v-else-if="isAudio" controls :src="content"></audio>
+      <video v-else-if="isVideo" controls :src="content"></video>
+
       <a v-if="isFile" :href="content" :download="name">{{name}}</a>
       <span v-else v-html="replaceUrls(text)"></span>
+
       <span class="time-created">{{formatDate(timestamp)}}</span>
     </div>
   </div>
@@ -18,13 +25,32 @@ export default {
     name: String,
     content: String,
     timestamp: Number,
+    senderId: String,
   },
   computed: {
+    computedAlias: {
+      get () { return this.$store.getters.alias(this.senderId) || this.senderId; }
+    },
+    isImage() {
+      return this.content && this.content.startsWith('data:image');
+    },
+    isAudio() {
+      return this.content && this.content.startsWith('data:audio');
+    },
+    isVideo() {
+      return this.content && this.content.startsWith('data:video');
+    },
     computedClass() {
       return this.isMine ? 'message mine' : 'message';
     }
   },
   methods: {
+    editAlias(event) {
+      this.$store.dispatch('setAlias', {
+        key: this.senderId,
+        value: event.target.value
+      });
+    },
     formatDate(timestamp) {
       let date = new Date(timestamp);
       let hours = date.getHours();
@@ -55,10 +81,33 @@ export default {
 </script>
 
 <style>
+.sender {
+  display: block;
+  font-size: 10px;
+  opacity: 0.6;
+  background: none;
+  border: none;
+  color: #fff;
+  outline: none;
+  cursor: pointer;
+}
+
+.sender:focus {
+  background-color: darkblue;
+}
+
 .time-created {
   display: block;
   bottom: 0;
   left: 0;
   font-size: 10px;
+  opacity: 0.3;
+}
+
+.message img,
+.message audio,
+.message video {
+  width: 100%;
+  padding: 10px;
 }
 </style>

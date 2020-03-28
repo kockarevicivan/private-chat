@@ -11,6 +11,7 @@
         :name="message.name"
         :content="message.content"
         :timestamp="message.timestamp"
+        :senderId="message.senderId"
         :isMine="message.senderId == computedSessionData.userId"
       />
     </div>
@@ -22,6 +23,7 @@
       </label>
 
       <input
+        autofocus="autofocus"
         v-model="messageInput"
         type="text"
         placeholder="Type message here"
