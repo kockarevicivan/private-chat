@@ -8,7 +8,7 @@
       <video v-else-if="isVideo" controls :src="content"></video>
 
       <a v-if="isFile" :href="content" :download="name">{{name}}</a>
-      <span v-else v-html="replaceUrls(text)"></span>
+      <span v-else v-html="computedContent"></span>
 
       <span class="time-created">{{formatDate(timestamp)}}</span>
     </div>
@@ -16,6 +16,8 @@
 </template>
 
 <script>
+import CryptoJS from "crypto-js";
+
 export default {
   name: "Message",
   props: {
@@ -28,6 +30,11 @@ export default {
     senderId: String,
   },
   computed: {
+    computedContent () {
+      const secret = this.$store.getters.secret();
+      
+      return this.replaceUrls(CryptoJS.AES.decrypt(this.text, secret).toString(CryptoJS.enc.Utf8));
+    },
     computedAlias: {
       get () { return this.$store.getters.alias(this.senderId) || this.senderId; }
     },

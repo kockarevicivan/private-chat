@@ -17,7 +17,8 @@ const store = new Vuex.Store({
       conversationId: null
     },
     messages: [],
-    aliasRegistry: {}
+    aliasRegistry: {},
+    secret: 'secret123'
   },
   mutations: {
     setSessionData(state, payload) {
@@ -73,7 +74,8 @@ const store = new Vuex.Store({
   getters: {
     sessionData: state => () => state.sessionData,
     messages: state => () => state.messages,
-    alias: state => (key) => state.aliasRegistry[key]
+    alias: state => (key) => state.aliasRegistry[key],
+    secret: state => () => state.secret
   }
 });
 

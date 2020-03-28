@@ -46,6 +46,7 @@
 </template>
 
 <script>
+import CryptoJS from "crypto-js";
 import Message from "./components/Message.vue";
 
 export default {
@@ -86,8 +87,10 @@ export default {
       };
     },
     sendMessage() {
+      const secret = this.$store.getters.secret();
+
       this.$store.dispatch("sendMessage", {
-        text: this.messageInput,
+        text: CryptoJS.AES.encrypt(this.messageInput, secret).toString(),
         timestamp: new Date().getTime()
       });
 
