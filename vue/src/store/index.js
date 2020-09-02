@@ -29,6 +29,9 @@ const store = new Vuex.Store({
     },
     setAlias(state, payload) {
       state.aliasRegistry[payload.key] = payload.value;
+    },
+    setSecret(state, payload) {
+      state.secret = payload;
     }
   },
   actions: {
@@ -69,7 +72,10 @@ const store = new Vuex.Store({
     },
     setAlias (context, payload) {
       context.commit('setAlias', payload);
-    } 
+    },
+    setSecret (context, payload) {
+      context.commit('setSecret', payload);
+    }
   },
   getters: {
     sessionData: state => () => state.sessionData,

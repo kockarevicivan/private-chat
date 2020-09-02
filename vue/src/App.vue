@@ -1,7 +1,7 @@
 <template>
   <main>
+      <img class="logo" src="images/logo.svg" />
     <div class="message-container">
-      <img class="logo" src="images/logo.png" />
 
       <Message
         v-for="message in computedMessages"
@@ -33,7 +33,7 @@
       <button class="btn" @click="sendMessage" title="Send message">
         <i class="fas fa-paper-plane"></i>
       </button>
-      <button class="btn grey" @click="copyInviteLinkToClipboard" title="Copy invite link">
+      <button class="btn" @click="copyInviteLinkToClipboard" title="Copy invite link">
         <i class="fas fa-copy"></i>
       </button>
     </div>
@@ -89,10 +89,16 @@ export default {
     sendMessage() {
       const secret = this.$store.getters.secret();
 
-      this.$store.dispatch("sendMessage", {
-        text: CryptoJS.AES.encrypt(this.messageInput, secret).toString(),
-        timestamp: new Date().getTime()
-      });
+      if (this.messageInput.startsWith("/key")) {
+        const newSecret = this.messageInput.split(" ")[1] || secret;
+        
+        this.$store.dispatch("setSecret", newSecret);
+      } else {
+        this.$store.dispatch("sendMessage", {
+          text: CryptoJS.AES.encrypt(this.messageInput, secret).toString(),
+          timestamp: new Date().getTime()
+        });
+      }
 
       this.messageInput = "";
     },
@@ -167,6 +173,7 @@ body {
   background-size: 400% 400%;
   -webkit-animation: gradient 10s ease infinite;
   animation: gradient 10s ease infinite;
+  min-width: 350px;
 }
 
 main {
@@ -187,7 +194,7 @@ h1 {
 
 input[type="text"] {
   height: 45px;
-  background-color: #d4d7d8;
+  background-color: transparent;
   border: none;
   border-radius: 5px;
   padding: 0 15px;
@@ -195,7 +202,6 @@ input[type="text"] {
 }
 
 input[type="text"]:focus {
-  background-color: #bfc7ca;
 }
 
 .btn {
@@ -203,10 +209,11 @@ input[type="text"]:focus {
   line-height: 46px;
   text-align: center;
   min-width: 46px;
-  border: 1px solid #0984e3;
-  background-color: #0984e3;
+  background: linear-gradient(145deg, #e4e4e4, #d1d1d1);
+  box-shadow:  20px 20px 60px #c5c5c5, 
+             -20px -20px 60px #ffffff;
+  border: none;
   color: #fff;
-  border-radius: 28px;
   padding: 0 10px;
   outline: none;
   cursor: pointer;
@@ -214,12 +221,6 @@ input[type="text"]:focus {
 
 .btn:active {
   opacity: 0.4;
-}
-
-.btn.grey {
-  background-color: #d4d7d8;
-  color: #999;
-  border-color: #d4d7d8;
 }
 
 .file-input input {
@@ -230,8 +231,6 @@ input[type="text"]:focus {
   position: relative;
   width: 100%;
   height: calc(100% - 110px);
-  background-color: #f4f4f4;
-  border-radius: 10px;
   padding: 20px;
   overflow: auto;
 }
@@ -244,9 +243,9 @@ input[type="text"]:focus {
 .message > div {
   position: relative;
   display: inline-block;
-  background-color: #b2bec3;
-  border-radius: 3px;
-  padding: 6px 10px;
+  border-radius: 14px;
+  background: linear-gradient(145deg, #99faf9, #81d3d2);
+  padding: 10px 14px;
   float: right;
   font-size: 13px;
   max-width: 70%;
@@ -259,8 +258,10 @@ input[type="text"]:focus {
 }
 
 .message.mine > div {
-  background-color: #0984e3;
-  color: #fff;
+  border-radius: 14px;
+background: linear-gradient(145deg, #e6e6e6, #f1f1f1);
+
+  // color: #fff;
   float: left;
 }
 
@@ -268,15 +269,18 @@ input[type="text"]:focus {
   position: absolute;
   display: flex;
   justify-content: space-between;
-  bottom: 0;
+  bottom: 45px;
   left: 20px;
   right: 20px;
-  padding: 40px;
   width: calc(100% - 40px);
-  height: 130px;
+  border-radius: 23px;
+  overflow: hidden;
+background: #ececec;
+box-shadow:  20px 20px 60px #f1f1f1, 
+             -20px -20px 60px #ffffff;
 
   input {
-    width: calc(100% - 170px);
+    width: calc(100% - 137px);
   }
 }
 
@@ -295,6 +299,28 @@ input[type="text"]:focus {
   left: 50%;
   transform: translate(-50%, -50%);
   width: 120px;
-  opacity: 0.2;
+  opacity: 0.12;
 }
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 5px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #d1d1d1;
+    border-radius: 5px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #d1d1d1;
+}
+
 </style>

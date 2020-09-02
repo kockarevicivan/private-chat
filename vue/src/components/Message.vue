@@ -94,7 +94,7 @@ export default {
   opacity: 0.6;
   background: none;
   border: none;
-  color: #fff;
+  margin-bottom: 6px;
   outline: none;
   cursor: pointer;
 }
@@ -108,6 +108,7 @@ export default {
   bottom: 0;
   left: 0;
   font-size: 10px;
+  margin-top: 3px;
   opacity: 0.3;
 }
 

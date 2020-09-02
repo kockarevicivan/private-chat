@@ -13,6 +13,7 @@ app.use('/css', express.static(path.join(__dirname, './static/css')));
 app.use('/images', express.static(path.join(__dirname, './static/images')));
 app.use('/js', express.static(path.join(__dirname, './static/js')));
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, './static/index.html')));
+app.get('/chats', (req, res) => res.sendFile(path.join(__dirname, './static/chats.html')));
 app.ws('/', socketController.onConnection);
 
 // Listen on port.
