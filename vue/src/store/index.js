@@ -1,5 +1,6 @@
 import Vue from "vue";
 import Vuex from "vuex";
+import { NotificationService, NOTIFICATIONS_PERMISSION_STATUS } from "../services";
 
 Vue.use(Vuex);
 
@@ -113,9 +114,15 @@ socket.onmessage = message => {
   if (message.type == "SESSION_DATA") {
     store.dispatch("setSessionData", message.payload);
   } else if (message.type == "MESSAGE") {
+    if(NotificationService.permissionGranted())
+      NotificationService.notify("Secretman.ga", "Someone has sent a message");
+
     store.dispatch("addMessage", message.payload);
   } else if (message.type == "FILE") {
-    message.payload.isFile = true;
+    if(NotificationService.permissionGranted())
+      NotificationService.notify("Secretman.ga", "Someone has sent a message");
+    
+      message.payload.isFile = true;
     store.dispatch("addMessage", message.payload);
   }
 };
