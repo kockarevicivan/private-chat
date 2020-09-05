@@ -47,14 +47,15 @@
 
 <script>
 import CryptoJS from "crypto-js";
-import Message from "./components/Message.vue";
+import { Message } from "./components";
 
 export default {
   name: "App",
   data() {
     return {
       messageInput: "",
-      conversationIdInput: ""
+      conversationIdInput: "",
+      tabVisible: true,
     };
   },
   components: {
@@ -67,6 +68,13 @@ export default {
     computedMessages() {
       return this.$store.getters.messages();
     }
+  },
+  created() {
+    // TODO: See how to refactor this line
+    document.addEventListener("visibilitychange", () => this.tabVisible = !this.tabVisible);
+
+    if(!this.$nativeNotifications.permissionGranted())
+      this.$nativeNotifications.requestPermission();
   },
   methods: {
     readFile(event) {
