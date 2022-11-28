@@ -2,7 +2,7 @@
   <main>
       <img class="logo" src="images/logo.svg" />
     <div class="message-container">
-
+      
       <Message
         v-for="message in computedMessages"
         :key="message.id"
