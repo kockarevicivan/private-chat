@@ -5,7 +5,7 @@ const socketController = require('./controllers/socketController');
 
 // Initialize app.
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3030;
 require('express-ws')(app);
 
 // Map static, http and socket routes.

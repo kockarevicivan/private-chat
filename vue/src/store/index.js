@@ -6,8 +6,10 @@ Vue.use(Vuex);
 
 const protocol = window.location.protocol == "https:" ? "wss://" : "ws://";
 const host = window.location.host.startsWith("localhost")
-  ? "localhost:3000"
+  ? "localhost:" + window.location.port
   : window.location.host;
+
+  console.log();
 
 const socket = new WebSocket(protocol + host);
 
